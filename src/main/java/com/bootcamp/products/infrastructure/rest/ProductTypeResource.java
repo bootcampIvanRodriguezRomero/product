@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
 @RestController
-@RequestMapping("/productTypes")
+@RequestMapping("/productType")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductTypeResource {
@@ -31,7 +31,7 @@ public class ProductTypeResource {
     @PostMapping
     public Mono<ProductTypeDto> createProductType(@Valid @RequestBody ProductTypePostDto productTypePostDto) {
         return productTypeRepository.existsByName(productTypePostDto.getName())
-                .flatMap(nameExists -> {
+               .flatMap(nameExists -> {
                     if (nameExists) {
                         return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name already exists"));
                     } else {
@@ -39,16 +39,23 @@ public class ProductTypeResource {
                         return productTypeRepository.save(productTypeDao)
                                 .map(this::fromProductTypeDaoToProductTypeDto);
                     }
-                });
+               });
     }
     @PutMapping("/{id}")
-    public Mono<ProductTypeDto> modifyProductType(@PathVariable String id, @Valid @RequestBody ProductTypeDto productTypeDto) {
-        return  productTypeRepository.findById(id)
-                .flatMap(existingProduct -> {
-                    existingProduct.setName(productTypeDto.getName());
-                    return productTypeRepository.save(existingProduct);
-                })
-                .map(this::fromProductTypeDaoToProductTypeDto);
+    public Mono<ProductTypeDto> modifyProductType(@PathVariable String id, @Valid @RequestBody ProductTypePostDto productTypePostDto) {
+        return  productTypeRepository.existsByName(productTypePostDto.getName())
+                .flatMap( nameExists -> {
+                    if(nameExists) {
+                        return  Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name already exists"));
+                    } else {
+                        return productTypeRepository.findById(id)
+                                .flatMap(existingProduct -> {
+                                    existingProduct.setName(productTypePostDto.getName());
+                                    return productTypeRepository.save(existingProduct);
+                                })
+                               .map(this::fromProductTypeDaoToProductTypeDto);
+                    }
+                });
     }
 
     @DeleteMapping("/{id}")
