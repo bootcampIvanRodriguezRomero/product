@@ -120,6 +120,7 @@ public class ProductResource {
   private ProductDao fromProductPostDtoToProductDao(ProductPostDto productPostDto) {
     ProductDao productDao = new ProductDao();
     productDao.setId(UUID.randomUUID().toString());
+    productDao.setAmount(productDao.getAmount());
     return productDao;
   }
 }
