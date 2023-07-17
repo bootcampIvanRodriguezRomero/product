@@ -8,10 +8,8 @@ import com.bootcamp.products.infrastructure.rest.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.util.UUID;
 @RestController
 @RequestMapping("/api/clients/{clientId}/products")
 @RequiredArgsConstructor

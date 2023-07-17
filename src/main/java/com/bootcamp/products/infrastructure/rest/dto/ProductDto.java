@@ -1,14 +1,18 @@
 package com.bootcamp.products.infrastructure.rest.dto;
+import com.bootcamp.products.infrastructure.repository.dao.ProductTypeDao;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+
+import java.util.List;
 
 @Data
 public class ProductDto {
     @JsonProperty("identification")
     @Id
     private String id;
-    @NotBlank(message = "Type is required")
-    private String type;
+    private ProductTypeDao type;
+    private double amount;
+    private List<String> clientIds;
+    private List<String> authorizedSignersIds;
 }

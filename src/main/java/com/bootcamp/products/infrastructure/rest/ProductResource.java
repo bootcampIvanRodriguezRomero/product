@@ -33,26 +33,25 @@ public class ProductResource {
     }
     @PostMapping
     public Mono<ProductDto> createProduct(@Valid @RequestBody ProductPostDto productPostDto) {
-        String productType = productPostDto.getType();
-        return productTypeRepository.existsByName(productType)
-                .flatMap(typeExists -> {
-                    if (typeExists) {
-                        ProductDao productDao = fromProductPostToProductDao(productPostDto);
-                        return productRepository.save(productDao)
-                                .map(this::fromProductDaoToProductDto);
-                    } else {
-                        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The product type does not exist"));
-                    }
-                });
+        return productTypeRepository.findByName(productPostDto.getType())
+                .flatMap(productTypeDao -> {
+                    ProductDao productDao = fromProductPostDtoToProductDao(productPostDto);
+                    productDao.setType(productTypeDao);
+                    return productRepository.save(productDao)
+                            .map(this::fromProductDaoToProductDto);
+                })
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The product type does not exist")));
     }
     @PutMapping("/{id}")
-    public Mono<ProductDto> modifyProduct(@PathVariable String id, @Valid @RequestBody ProductDto productDto) {
-        return  productRepository.findById(id)
-                .flatMap(existingProduct -> {
-                    existingProduct.setType(productDto.getType());
-                    return productRepository.save(existingProduct);
-                })
-                .map(this::fromProductDaoToProductDto);
+    public Mono<ProductDto> modifyProduct(@PathVariable String id, @Valid @RequestBody ProductPostDto productPostDto) {
+        return productTypeRepository.findByName(productPostDto.getType())
+                .flatMap(productTypeDao -> productRepository.findById(id)
+                        .flatMap(existingProduct -> {
+                            existingProduct.setType(productTypeDao);
+                            return productRepository.save(existingProduct);
+                        })
+                        .map(this::fromProductDaoToProductDto))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The product type does not exist")));
     }
 
     @DeleteMapping("/{id}")
@@ -74,10 +73,9 @@ public class ProductResource {
         return productDto;
     }
 
-    private ProductDao fromProductPostToProductDao(ProductPostDto productPostDto) {
+    private ProductDao fromProductPostDtoToProductDao(ProductPostDto productPostDto) {
         ProductDao productDao = new ProductDao();
         productDao.setId(UUID.randomUUID().toString());
-        productDao.setType(productPostDto.getType());
         return productDao;
     }
 }

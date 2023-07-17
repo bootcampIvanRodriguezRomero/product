@@ -10,6 +10,8 @@ import java.util.List;
 public class ProductDao {
     @Id
     private String id;
-    private String type;
+    private ProductTypeDao type;
+    private double amount;
     private List<String> clientIds;
+    private List<String> authorizedSignersIds;
 }
