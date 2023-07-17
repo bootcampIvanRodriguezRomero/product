@@ -1,12 +1,16 @@
 package com.bootcamp.products.infrastructure.repository.dao;
+
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Represents a product type entity stored in the database.
+ */
 @Data
 @Document("productType")
 public class ProductTypeDao {
-    @Id
-    private String id;
-    private String name;
+  @Id
+  private String id;
+  private String name;
 }
