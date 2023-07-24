@@ -9,9 +9,9 @@ import lombok.Data;
 public class Product {
   private String id;
   private ProductType type;
-  private boolean isActive;
-  private double balance;
-  private double interestRate;
+  private Boolean isActive;
+  private Double balance;
+  private Double interestRate;
   private ProductData data;
   private LocalDateTime created;
   private LocalDateTime updated;

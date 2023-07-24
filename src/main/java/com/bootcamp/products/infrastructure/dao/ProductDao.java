@@ -1,26 +1,30 @@
-package com.bootcamp.products.application.dto;
+package com.bootcamp.products.infrastructure.dao;
 
 import com.bootcamp.products.domain.model.Client;
 import com.bootcamp.products.domain.model.product.ProductData;
 import com.bootcamp.products.domain.model.product.ProductType;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-public class ProductDto {
+@Document("product")
+public class ProductDao {
+  @Id
   private String id;
-  @NotBlank
   private ProductType type;
-  @NotBlank
   private Boolean isActive;
-  @NotBlank
   private Double balance;
-  @NotBlank
   private Double interestRate;
   private ProductData data;
+  @CreatedDate
   private LocalDateTime created;
+  @LastModifiedDate
   private LocalDateTime updated;
   private List<Client> clients;
+  
 }
